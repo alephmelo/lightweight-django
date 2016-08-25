@@ -27,7 +27,7 @@ from django.http import HttpResponse
 from django import forms
 
 
-class ImageForm(object):
+class ImageForm(forms.Form):
     """Form to validate requested placeholder image"""
     height = forms.IntegerField(min_value=1, max_value=2000)
     width = forms.IntegerField(min_value=1, max_value=2000)
