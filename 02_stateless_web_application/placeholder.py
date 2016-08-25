@@ -24,6 +24,13 @@ settings.configure(
 from django.conf.urls import url
 from django.core.wsgi import get_wsgi_application
 from django.http import HttpResponse
+from django import forms
+
+
+class ImageForm(object):
+    """Form to validate requested placeholder image"""
+    height = forms.IntegerField(min_value=1, max_value=2000)
+    width = forms.IntegerField(min_value=1, max_value=2000)
 
 
 def index(request):
@@ -36,6 +43,8 @@ def placeholder(request, width, height):
 
 urlpatterns = (
     url(r'^$', index),
+    url(r'^image/(?P<width>[0-9]+)x(?P<height>[0-9]+)/$', placeholder,
+            name='placeholder')
 )
 
 
