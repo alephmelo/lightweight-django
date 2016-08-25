@@ -23,7 +23,7 @@ settings.configure(
 
 from django.conf.urls import url
 from django.core.wsgi import get_wsgi_application
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django import forms
 
 
@@ -37,9 +37,14 @@ def index(request):
     return HttpResponse('Hello World')
 
 
-def placeholder(request, width, height): 
-    # TODO: Rest of the view will go here
-    return HttpResponse('Ok')
+def placeholder(request, width, height):
+    form = ImageForm({'height': height, 'width': width})
+    if form.is_valid():
+        height = form.cleaned_data['height']
+        width = form.cleaned_data['width']
+        return HttpResponse('Ok')
+    else:
+        return HttpResponseBadRequest('Ok')
 
 urlpatterns = (
     url(r'^$', index),
