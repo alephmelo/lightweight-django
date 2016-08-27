@@ -10,6 +10,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'xf9we1xgk)r84mt0y@j8ul@zkb8ms+pl@kekz
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
 
+BASE_DIR = os.path.dirname(__file__)
+
 settings.configure(
     DEBUG=DEBUG,
     SECRET_KEY=SECRET_KEY,
@@ -20,16 +22,28 @@ settings.configure(
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
     ),
+    INSTALLED_APPS=(
+        'django.contrib.staticfiles',
+    ),
+    TEMPLATES=(
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': (os.path.join(BASE_DIR, 'templates'), )
+        }
+    ),
+    STATIC_URL='/static/',
 )
 
-from django.conf.urls             import url
-from django.core.cache            import cache
-from django.core.wsgi             import get_wsgi_application
-from django.http                  import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import etag
+from django.core.urlresolvers     import reverse
+from django.core.cache            import cache
+from django.conf.urls             import url
+from django.core.wsgi             import get_wsgi_application
+from django.shortcuts             import render
+from django.http                  import HttpResponse, HttpResponseBadRequest
 from django                       import forms
-from io                           import BytesIO
 from PIL                          import Image, ImageDraw
+from io                           import BytesIO
 
 
 class ImageForm(forms.Form):
@@ -60,7 +74,11 @@ class ImageForm(forms.Form):
 
 
 def index(request):
-    return HttpResponse('Hello World')
+    example = reverse('placeholder', kwargs={'width':50, 'height':50})
+    context = {
+        'example': request.build_absolute_uri(example)
+    }
+    return render(request, 'index.html', context)
 
 
 def generate_etag(request, width, height):
