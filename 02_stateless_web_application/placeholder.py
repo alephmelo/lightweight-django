@@ -52,9 +52,8 @@ def index(request):
 def placeholder(request, width, height):
     form = ImageForm({'height': height, 'width': width})
     if form.is_valid():
-        height = form.cleaned_data['height']
-        width = form.cleaned_data['width']
-        return HttpResponse('Ok')
+        image = form.generate()
+        return HttpResponse(image, content_type='image/png')
     else:
         return HttpResponseBadRequest('Ok')
 
